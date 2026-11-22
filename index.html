@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ella's & Co. — Boutique virtual feminina | Nova Odessa – SP</title>
+  <meta name="description" content="Ella's & Co. — boutique virtual feminina do P ao GG. Moderna, elegante e sofisticada. Atendimento em Nova Odessa e região, envios para todo o Brasil.">
+  <meta name="theme-color" content="#2E2420">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ella's & Co. — Inspirando seu autêntico estilo">
+  <meta property="og:description" content="Boutique virtual feminina do P ao GG. Envios para todo o Brasil.">
+  <meta property="og:locale" content="pt_BR">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23F3EFE0'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%231E1C19'%3EE%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "Ella's & Co.",
+    "slogan": "Inspirando seu autêntico estilo",
+    "telephone": "+55 19 99124-1449",
+    "address": { "@type": "PostalAddress", "addressLocality": "Nova Odessa", "addressRegion": "SP", "addressCountry": "BR" },
+    "sameAs": ["https://www.instagram.com/ellas.eco/"]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#colecao">Pular para a coleção</a>
+
+  <div class="topbar" role="note">
+    <span>Enviamos para todo o Brasil</span>
+    <span class="dot" aria-hidden="true">•</span>
+    <span>Do P ao GG</span>
+    <span class="dot hide-sm" aria-hidden="true">•</span>
+    <span class="hide-sm">Baggies: experimente antes de decidir</span>
+  </div>
+
+  <header class="header">
+    <div class="wrap header-in">
+      <a class="logo" href="#top" aria-label="Ella's & Co. — início">Ella’s<span>&amp;Co.</span></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Abrir menu"><span></span><span></span></button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="#colecao">Coleção</a>
+        <a href="#baggies">Baggies</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#instagram">Instagram</a>
+        <a class="nav-wa" data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#">Falar no WhatsApp</a>
+      </nav>
+      <a class="btn btn-ink btn-sm" data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8.4c.3-.6.6-.6.9-.6h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.7 1.2 1.6 2 2.8 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.2.1.4.2.4.4 0 .5-.1 1.2-.7 1.6-.5.4-1.6.7-3.2-.1-1.8-.9-3.4-2.6-4.2-4.2-.6-1.2-.3-2.3 0-2.8z" fill="currentColor"/></svg>
+        <span>WhatsApp</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- PASSARELA (hero) -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-head">
+        <h1 id="hero-title" class="display">Inspirando seu <em>autêntico</em> estilo.</h1>
+        <div class="hero-side">
+          <p class="hero-sub">Boutique virtual feminina em Nova Odessa – SP. Moderna, elegante e sofisticada.</p>
+          <div class="hero-cta">
+            <a class="btn btn-ink" href="#colecao">Ver a coleção</a>
+            <a class="btn btn-line" href="#baggies">Como funciona o Baggies</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="runway">
+        <div class="runway-stage" id="runway-stage" tabindex="0" role="listbox" aria-label="Passarela de peças. Use as setas para girar." aria-roledescription="carrossel"></div>
+
+        <p class="runway-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Arraste para os lados e toque no número para ver a peça</p>
+
+        <aside class="runway-list" aria-label="As peças">
+          <p class="eyebrow">As peças</p>
+          <ol id="runway-list"></ol>
+        </aside>
+
+        <div class="runway-bar">
+          <div class="runway-caption" aria-live="polite">
+            <span class="rc-num" id="rc-num">01 / 06</span>
+            <span class="rc-name" id="rc-name"></span>
+            <span class="rc-price" id="rc-price"></span>
+          </div>
+          <div class="runway-ctrl">
+            <button class="round" id="rw-prev" aria-label="Peça anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <div class="rw-dots" id="rw-dots" role="group" aria-label="Escolher peça"></div>
+            <button class="round" id="rw-next" aria-label="Próxima peça"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
+            <a class="btn btn-ink btn-sm" id="rc-link" href="#">Ver peça</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIFERENCIAIS -->
+    <section class="perks" aria-label="Diferenciais">
+      <div class="wrap perks-in">
+        <div class="perk">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h16v13H3zM19 13h5l4 4v5h-9" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="23.5" r="2.3" fill="var(--paper)" stroke="currentColor" stroke-width="1.3"/><circle cx="23" cy="23.5" r="2.3" fill="var(--paper)" stroke="currentColor" stroke-width="1.3"/></svg>
+          <div><h2>Envios para todo o Brasil</h2><p>E atendimento próximo em Nova Odessa e região.</p></div>
+        </div>
+        <div class="perk">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 11h18l-1.5 17h-15z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M12 11V9a4 4 0 0 1 8 0v2" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
+          <div><h2>Baggies</h2><p>Experimente em casa e fique só com o que amar.</p></div>
+        </div>
+        <div class="perk">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4.5a11.5 11.5 0 0 0-9.9 17.3L4.5 27.5l5.9-1.5A11.5 11.5 0 1 0 16 4.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          <div><h2>Atendimento pelo WhatsApp</h2><p>Tire dúvidas de tamanho, tecido e disponibilidade.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLEÇÃO -->
+    <section class="section" id="colecao" aria-labelledby="colecao-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <h2 id="colecao-title" class="display-2">Peças para o seu <em>dia a dia</em></h2>
+          </div>
+          <p class="sec-note">Tamanhos do P ao GG. Mostramos apenas os tamanhos confirmados para cada peça.</p>
+        </div>
+
+        <form class="filters" id="filters" role="search" onsubmit="return false">
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span class="sr">Buscar peça</span>
+            <input type="search" id="f-q" placeholder="Buscar peça" autocomplete="off">
+          </label>
+
+          <div class="f-group" role="group" aria-label="Categoria">
+            <div class="chips" id="f-cat"></div>
+          </div>
+
+          <div class="f-row">
+            <div class="f-group" role="group" aria-label="Tamanho">
+              <span class="f-label">Tamanho</span>
+              <div class="chips chips-sm" id="f-size"></div>
+            </div>
+            <label class="f-group f-price">
+              <span class="f-label">Preço</span>
+              <select id="f-price">
+                <option value="all">Todos os valores</option>
+                <option value="0-240">Até R$ 240</option>
+                <option value="240-270">R$ 240 a R$ 270</option>
+                <option value="270-99999">Acima de R$ 270</option>
+              </select>
+            </label>
+          </div>
+        </form>
+
+        <div class="result-row">
+          <p class="result-count" id="result-count" aria-live="polite"></p>
+          <button type="button" class="link-clear" id="clear-inline" hidden>Limpar filtros</button>
+        </div>
+        <ul class="grid" id="grid"></ul>
+        <div class="empty" id="empty" hidden>
+          <p class="display-3">Nenhuma peça encontrada.</p>
+          <p>Tente outra combinação ou fale com a gente: podemos ter novidades que ainda não estão aqui.</p>
+          <button class="btn btn-line" id="clear-filters" type="button">Limpar filtros</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- BAGGIES -->
+    <section class="baggies" id="baggies" aria-labelledby="baggies-title">
+      <div class="wrap baggies-in">
+        <figure class="baggies-photo">
+          <img src="img/marca/collection-bag.jpg" alt="Mala vermelha da Collection Bag Ella's &amp; Co. pronta para levar as peças até a cliente" loading="lazy" decoding="async">
+        </figure>
+        <div>
+        <div class="baggies-head">
+          <h2 id="baggies-title" class="display-2">Baggies: experimente <em>antes</em> de decidir.</h2>
+          <p class="lead">Escolha suas peças favoritas, experimente com tranquilidade e fique apenas com aquilo que realmente amar.</p>
+          <a class="btn btn-gold" data-wa="Olá! Gostaria de saber como funciona o Baggies da Ella's & Co. e quais são as condições do serviço." href="#">Consultar condições pelo WhatsApp</a>
+          <p class="fine">As condições do serviço são combinadas diretamente com a nossa equipe.</p>
+        </div>
+        <ol class="steps">
+          <li><span class="step-n">01</span><h3>Escolha</h3><p>Separe as peças que chamaram sua atenção aqui no site ou no Instagram.</p></li>
+          <li><span class="step-n">02</span><h3>Experimente</h3><p>As peças chegam até você para provar com calma, no seu tempo e no seu espelho.</p></li>
+          <li><span class="step-n">03</span><h3>Fique com o que amar</h3><p>Gostou? É sua. Não combinou com você? Não precisa ficar com ela.</p></li>
+        </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section about" id="sobre" aria-labelledby="sobre-title">
+      <div class="wrap about-in">
+        <div class="about-mark" aria-hidden="true">
+          <div class="mark-circle"><span>Ella’s</span><span>&amp;Co.</span></div>
+        </div>
+        <div>
+          <h2 id="sobre-title" class="display-2">Uma boutique virtual feita para <em>vestir você</em>, do P ao GG.</h2>
+          <p class="lead">Selecionamos peças modernas, elegantes e sofisticadas para inspirar o seu autêntico estilo, com atendimento próximo e cuidadoso do primeiro contato até a peça chegar em você.</p>
+          <ul class="facts">
+            <li><span>Base</span>Nova Odessa – SP</li>
+            <li><span>Atendimento</span>Nova Odessa e região</li>
+            <li><span>Envios</span>Todo o Brasil</li>
+            <li><span>Grade</span>P · M · G · GG</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTAGRAM -->
+    <section class="section insta" id="instagram" aria-labelledby="insta-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <h2 id="insta-title" class="display-2">Acompanhe as novidades em <a class="handle" href="https://www.instagram.com/ellas.eco/" target="_blank" rel="noopener">@ellas.eco</a></h2>
+          </div>
+          <a class="btn btn-line" href="https://www.instagram.com/ellas.eco/" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></svg>
+            Seguir no Instagram
+          </a>
+        </div>
+        <ul class="feed" id="highlights"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-in">
+      <div>
+        <a class="logo logo-lg" href="#top">Ella’s<span>&amp;Co.</span></a>
+        <p class="footer-tag">Inspirando seu autêntico estilo.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Contato</h4>
+          <a data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#">WhatsApp (19) 99124-1449</a>
+          <a href="https://www.instagram.com/ellas.eco/" target="_blank" rel="noopener">Instagram @ellas.eco</a>
+        </div>
+        <div>
+          <h4>Onde estamos</h4>
+          <p>Nova Odessa – SP<br>Atendimento em Nova Odessa e região<br>Envios para todo o Brasil</p>
+        </div>
+        <div>
+          <h4>Navegue</h4>
+          <a href="#colecao">Coleção</a>
+          <a href="#baggies">Baggies</a>
+          <a href="#sobre">Sobre</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap footer-base">
+      <span>© <span id="year"></span> Ella’s &amp; Co.</span>
+      <span class="proto-note">Protótipo · fotos do Instagram @ellas.eco · preços ilustrativos</span>
+    </div>
+  </footer>
+
+  <a class="wa-float" data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#" aria-label="Falar com a Ella's & Co. pelo WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8.4c.3-.6.6-.6.9-.6h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.7 1.2 1.6 2 2.8 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.2.1.4.2.4.4 0 .5-.1 1.2-.7 1.6-.5.4-1.6.7-3.2-.1-1.8-.9-3.4-2.6-4.2-4.2-.6-1.2-.3-2.3 0-2.8z" fill="currentColor"/></svg>
+  </a>
+
+  <!-- PÁGINA DA PEÇA (rota #/peca/slug) -->
+  <div class="product" id="product" role="dialog" aria-modal="true" aria-labelledby="pd-name" hidden>
+    <div class="product-scrim" data-close></div>
+    <article class="product-panel" id="product-panel"></article>
+  </div>
+
+  <script src="js/products.js"></script>
+  <script src="js/figures.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

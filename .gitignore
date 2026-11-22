@@ -1,0 +1,10 @@
+# configurações locais de ferramentas
+.claude/
+.impeccable/
+
+# fotos originais de referência (o site usa as versões otimizadas em img/pecas e img/insta)
+img/original/
+
+# sistema
+Thumbs.db
+.DS_Store
