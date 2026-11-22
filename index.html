@@ -15,6 +15,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script>
+    try {
+      var d = document.documentElement;
+      d.classList.add('js');
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('ellas-intro')) d.classList.add('intro-on');
+    } catch (e) {}
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -28,6 +35,12 @@
   </script>
 </head>
 <body>
+  <div class="intro" aria-hidden="true">
+    <div class="intro-logo"><span class="intro-a">Ella’s</span><span class="intro-b">&amp;Co.</span></div>
+    <p class="intro-tag">Inspirando seu autêntico estilo</p>
+  </div>
+  <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-label"></span></div>
+
   <a class="skip" href="#colecao">Pular para a coleção</a>
 
   <div class="topbar" role="note">
@@ -60,7 +73,7 @@
     <!-- PASSARELA (hero) -->
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-head">
-        <h1 id="hero-title" class="display">Inspirando seu <em>autêntico</em> estilo.</h1>
+        <h1 id="hero-title" class="display hero-title"><span class="ln"><span>Inspirando seu</span></span> <span class="ln"><span><em>autêntico</em> estilo.</span></span></h1>
         <div class="hero-side">
           <p class="hero-sub">Boutique virtual feminina em Nova Odessa – SP. Moderna, elegante e sofisticada.</p>
           <div class="hero-cta">
@@ -114,6 +127,34 @@
       </div>
     </section>
 
+    <!-- ESCOLHA POR ESTILO -->
+    <section class="explore" aria-labelledby="explore-title">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2 id="explore-title" class="display-2">Escolha por <em>estilo</em></h2>
+          <p class="sec-note">Passe o mouse (ou deslize) e toque para ir direto às peças.</p>
+        </div>
+        <div class="panels">
+          <a class="panel" href="#colecao" data-filter="Vestidos">
+            <img src="img/insta/vestido-leve-bolsos.webp" alt="" loading="lazy" decoding="async">
+            <span class="panel-txt"><span class="panel-name">Vestidos</span><span class="panel-meta" data-count="Vestidos"></span></span>
+          </a>
+          <a class="panel" href="#colecao" data-filter="Conjuntos">
+            <img src="img/insta/conjunto-bata-alfaiataria.webp" alt="" loading="lazy" decoding="async">
+            <span class="panel-txt"><span class="panel-name">Conjuntos</span><span class="panel-meta" data-count="Conjuntos"></span></span>
+          </a>
+          <a class="panel" href="#baggies">
+            <img src="img/marca/collection-bag.jpg" alt="" loading="lazy" decoding="async">
+            <span class="panel-txt"><span class="panel-name">Baggies</span><span class="panel-meta">Experimente em casa</span></span>
+          </a>
+          <a class="panel" href="https://www.instagram.com/ellas.eco/" target="_blank" rel="noopener">
+            <img src="img/insta/vestido-midi-couro.webp" alt="" loading="lazy" decoding="async">
+            <span class="panel-txt"><span class="panel-name">Novidades</span><span class="panel-meta">no Instagram</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- COLEÇÃO -->
     <section class="section" id="colecao" aria-labelledby="colecao-title">
       <div class="wrap">
@@ -163,6 +204,18 @@
           <button class="btn btn-line" id="clear-filters" type="button">Limpar filtros</button>
         </div>
       </div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto" id="manifesto" aria-label="Moderna, elegante e sofisticada">
+      <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+      <div class="mf-lines" aria-hidden="true">
+        <p class="mf-line" data-dir="-1">Moderna.</p>
+        <p class="mf-line mf-outline" data-dir="1">Elegante.</p>
+        <p class="mf-line mf-gold" data-dir="-1">Sofisticada.</p>
+      </div>
+      <p class="sr">Moderna, elegante e sofisticada.</p>
+      <p class="mf-sub">Do P ao GG <span aria-hidden="true">·</span> Enviamos para todo o Brasil</p>
     </section>
 
     <!-- BAGGIES -->
@@ -266,5 +319,6 @@
   <script src="js/products.js"></script>
   <script src="js/figures.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/motion.js"></script>
 </body>
 </html>
