@@ -41,7 +41,7 @@
   const STEP = (Math.PI * 2) / N;
   const models = products.map((p, i) => {
     const el = document.createElement('div');
-    el.className = 'model' + (p.photos.length ? ' has-photo' : '');
+    el.className = 'model' + (p.photos.length ? ' has-photo' : '') + (p.cut ? ' cut' : '');
     if (p.ratio) el.style.setProperty('--ratio', p.ratio);
     el.setAttribute('role', 'option');
     el.innerHTML =
@@ -83,7 +83,7 @@
       const scale = 0.52 + 0.48 * depth;
       const y = -(1 - depth) * 34;
       el.style.transform = `translate3d(calc(-50% + ${x.toFixed(1)}px), ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-      el.style.opacity = (0.5 + 0.5 * Math.pow(depth, 1.4)).toFixed(3);
+      el.style.opacity = (Math.pow(Math.min(1, Math.max(0, (depth - 0.1) / 0.65)), 1.2) * (0.8 + 0.2 * depth)).toFixed(3);
       el.style.filter = depth > 0.97 ? 'none' : `blur(${((1 - depth) * 2.6).toFixed(2)}px) saturate(${(0.6 + 0.4 * depth).toFixed(2)})`;
       el.style.zIndex = Math.round(depth * 100);
     });

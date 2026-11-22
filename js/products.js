@@ -11,6 +11,7 @@
  *  photos        → foto da peça SEM FUNDO (WebP/PNG com transparência).
  *                  Para 'img/pecas/x.webp' existe também 'x-sm.webp' (miniatura).
  *  ratio         → largura ÷ altura do recorte (ex.: 0.42).
+ *  cut           → true se a foto original corta os pés (a base some na sombra do piso).
  *  pin           → posição do ponto numerado na foto da passarela [x, y] (0 a 1).
  *  source        → publicação de origem no Instagram.
  *
@@ -38,6 +39,7 @@ window.ELLAS = {
       details: ['Blusa assimétrica', 'Aplicação dourada na cintura', 'Calça de caimento solto'],
       photos: ['img/pecas/conjunto-preto.webp'],
       ratio: 0.415,
+      cut: true, // foto original corta os pés
       pin: [0.48, 0.25],
       source: 'https://www.instagram.com/ellas.eco/p/Db8_ywjGssA/'
     },
@@ -83,6 +85,7 @@ window.ELLAS = {
       details: ['Tecido leve', 'Bordado delicado', 'Alças finas'],
       photos: ['img/pecas/vestido-angelica.webp'],
       ratio: 0.451,
+      cut: true, // foto original corta os pés
       pin: [0.5, 0.55],
       source: 'https://www.instagram.com/ellas.eco/reel/DecVTFNhkNk/'
     },
@@ -98,6 +101,7 @@ window.ELLAS = {
       details: ['Jeans confortável', 'Decote franzido', 'Fenda frontal'],
       photos: ['img/pecas/vestido-jeans.webp'],
       ratio: 0.396,
+      cut: true, // foto original corta os pés
       pin: [0.5, 0.45],
       source: 'https://www.instagram.com/ellas.eco/reel/DU8q9FRjmx2/'
     },
@@ -113,6 +117,7 @@ window.ELLAS = {
       details: ['Comprimento longo', 'Amarração na cintura', 'Amarelo manteiga ou azul'],
       photos: ['img/pecas/vestido-longo-manteiga.webp'],
       ratio: 0.424,
+      cut: true, // foto original corta os pés
       pin: [0.5, 0.52],
       source: 'https://www.instagram.com/ellas.eco/reel/DSaUbn_jvOR/'
     }
