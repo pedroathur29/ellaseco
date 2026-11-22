@@ -20,7 +20,7 @@
   /* texto sobre escuro */
   --on-dark: #F1EADC;
   --on-dark-2: #CDBFAA;
-  --on-dark-3: #BFAF98;
+  --on-dark-3: #C9BAA4;
 
   /* acentos */
   --gold: #D2B079;        /* "&Co.", destaques sobre escuro */
@@ -130,10 +130,17 @@ button { cursor: pointer; }
   --ring-x: 50%;
   position: relative; overflow: hidden; color: var(--on-dark);
   padding-top: clamp(26px, 3.4vw, 46px);
+  /* Palco: fundo chocolate contínuo, com um brilho quente muito largo e gradual
+     (sem borda visível) e o piso levemente mais escuro para firmar as modelos. */
   background:
-    radial-gradient(ellipse 42% 58% at var(--ring-x) 64%, rgba(214, 178, 128, .30) 0%, rgba(214, 178, 128, .10) 45%, transparent 72%),
-    radial-gradient(ellipse 80% 30% at var(--ring-x) 100%, rgba(241, 234, 220, .10), transparent 70%),
-    var(--choc);
+    radial-gradient(ellipse 78% 62% at var(--ring-x) 60%,
+      rgba(201, 164, 106, .15) 0%, rgba(201, 164, 106, .12) 16%, rgba(201, 164, 106, .085) 32%,
+      rgba(201, 164, 106, .05) 48%, rgba(201, 164, 106, .024) 64%, rgba(201, 164, 106, .008) 80%, transparent 95%),
+    linear-gradient(180deg, #2A211D 0%, var(--choc) 50%, #29201C 100%);
+}
+.hero::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26%; pointer-events: none; z-index: 1;
+  background: linear-gradient(180deg, transparent, rgba(24, 18, 15, .38));
 }
 .hero .display { color: var(--on-dark); }
 .hero .display em { color: var(--gold); }
@@ -632,21 +639,23 @@ button { cursor: pointer; }
   opacity: 0; transition: opacity .3s;
 }
 .cursor.on { opacity: 1; }
+/* anel pequeno; sobre links cresce só um pouco; sobre áreas com ação aparece uma etiqueta ao lado */
 .cursor::before {
-  content: ""; position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%;
+  content: ""; position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%;
   border: 1.5px solid var(--choc); background: transparent;
-  transition: left .4s var(--ease), top .4s var(--ease), width .4s var(--ease), height .4s var(--ease), background .35s, border-color .35s, transform .2s;
+  transition: left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease), background .3s, border-color .3s, transform .2s;
 }
 .cursor.on-dark::before { border-color: var(--gold); }
-.cursor.link::before { left: -27px; top: -27px; width: 54px; height: 54px; background: rgba(201, 164, 106, .16); }
-.cursor.label::before { left: -46px; top: -46px; width: 92px; height: 92px; background: var(--gold); border-color: var(--gold); }
-.cursor.press::before { transform: scale(.86); }
+.cursor.link::before { left: -14px; top: -14px; width: 28px; height: 28px; background: rgba(201, 164, 106, .18); }
+.cursor.label::before { left: -5px; top: -5px; width: 10px; height: 10px; background: var(--gold); border-color: var(--gold); }
+.cursor.press::before { transform: scale(.85); }
 .cursor-label {
-  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) scale(.6); opacity: 0; white-space: nowrap;
-  font: 700 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--choc);
-  transition: opacity .25s, transform .4s var(--ease);
+  position: absolute; left: 14px; top: 12px; transform: translateY(4px) scale(.9); transform-origin: left top; opacity: 0; white-space: nowrap;
+  padding: 6px 10px; border-radius: 999px; background: var(--gold); box-shadow: 0 6px 16px rgba(0, 0, 0, .25);
+  font: 700 10px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--choc);
+  transition: opacity .2s, transform .3s var(--ease);
 }
-.cursor.label .cursor-label { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.cursor.label .cursor-label { opacity: 1; transform: none; }
 
 @media (max-width: 900px) {
   .panels { height: 440px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); scrollbar-width: none; }

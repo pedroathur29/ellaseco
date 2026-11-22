@@ -34,8 +34,29 @@
   /* ---------- Esteira de peças (manifesto) ---------- */
   const track = $('#marquee');
   if (track) {
-    const items = products.map(p => `<a class="mq-item" href="#/peca/${p.slug}" tabindex="-1"><img src="${p.photos[0].replace(/\.(webp|png|jpg)$/i, '-sm.$1')}" alt="" loading="lazy" decoding="async"><span>${p.name}</span></a>`).join('');
-    track.innerHTML = items + items; // duas voltas para emendar sem salto
+    const one = products.map(p => `<a class="mq-item" href="#/peca/${p.slug}" tabindex="-1"><img src="${p.photos[0].replace(/\.(webp|png|jpg)$/i, '-sm.$1')}" alt=""><span>${p.name}</span></a>`).join('');
+    // A faixa anda metade do próprio comprimento e recomeça. Para nunca aparecer
+    // espaço vazio, cada metade precisa ser MAIOR que a largura da tela:
+    // medimos um conjunto e repetimos quantas vezes for preciso.
+    let built = 0;
+    const build = () => {
+      const w = innerWidth;
+      if (built && Math.abs(w - built) < 40) return;
+      built = w;
+      track.style.animationName = 'none';
+      track.innerHTML = one;
+      const setW = track.scrollWidth || 1;
+      const half = one.repeat(Math.max(1, Math.ceil((w + 60) / setW)));
+      track.innerHTML = half + half;
+      const halfW = track.scrollWidth / 2;
+      track.style.animationDuration = Math.max(20, halfW / 55).toFixed(1) + 's'; // ~55 px por segundo
+      track.style.animationName = ''; // volta ao nome definido no CSS e reinicia
+    };
+    build();
+    // as fotos pequenas mudam a largura ao carregar: refaz uma vez quando terminarem
+    addEventListener('load', () => { built = 0; build(); });
+    let rt;
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
   }
 
   if (reduce) return;

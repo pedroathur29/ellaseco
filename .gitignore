@@ -8,3 +8,6 @@ img/original/
 # sistema
 Thumbs.db
 .DS_Store
+
+# notas internas (análise e guia de fotos): não vão para o repositório público
+docs/
