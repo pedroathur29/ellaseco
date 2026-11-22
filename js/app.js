@@ -103,6 +103,8 @@
     $('#rc-name').textContent = p.name;
     $('#rc-price').textContent = money(p.price);
     $('#rc-link').href = href(p);
+    const cap = $('.runway-caption');
+    cap.classList.remove('swap'); void cap.offsetWidth; cap.classList.add('swap');
     $$('button', dots).forEach((b, i) => b.setAttribute('aria-current', i === a));
   }
 
@@ -258,6 +260,8 @@
     $('#grid').innerHTML = out.map(card).join('');
     $('#empty').hidden = out.length > 0;
     $('#result-count').textContent = out.length === 1 ? '1 peça' : `${out.length} peças`;
+    const rcEl = $('#result-count');
+    rcEl.classList.remove('tick'); void rcEl.offsetWidth; rcEl.classList.add('tick');
     $('#clear-inline').hidden = !(state.q || state.cat !== 'Todas' || state.size || state.price !== 'all');
   }
 
@@ -367,7 +371,9 @@
     $('#pd-bag', panel).href = waLink(msgBaggie(p, chosenSize));
   }
 
+  let closeTimer = 0;
   function openProduct(p) {
+    clearTimeout(closeTimer); closeTimer = 0; overlay.classList.remove('closing');
     if (overlay.hidden) lastFocus = document.activeElement;
     renderProduct(p);
     overlay.hidden = false;
@@ -376,11 +382,18 @@
     $('.pd-back', panel).focus({ preventScroll: true });
   }
   function closeProduct() {
-    if (overlay.hidden) return;
-    overlay.hidden = true;
-    document.body.classList.remove('locked');
-    document.title = "Ella's & Co. — Boutique virtual feminina | Nova Odessa – SP";
-    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    if (overlay.hidden || closeTimer) return;
+    const done = () => {
+      closeTimer = 0;
+      overlay.hidden = true;
+      overlay.classList.remove('closing');
+      document.body.classList.remove('locked');
+      document.title = "Ella's & Co. — Boutique virtual feminina | Nova Odessa – SP";
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    };
+    if (reduceMotion) return done();
+    overlay.classList.add('closing'); // o painel desliza para fora antes de sumir
+    closeTimer = setTimeout(done, 430);
   }
   function leaveProduct() {
     history.pushState('', document.title, location.pathname + location.search);

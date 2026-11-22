@@ -691,3 +691,101 @@ button { cursor: pointer; }
               flex-grow 1.3s cubic-bezier(.33, 0, .15, 1) .05s;
 }
 .motion .panel.rv.in { transform: none; }
+
+/* =========================================================
+   Movimento v2 — o que ainda estava parado
+   Mesma curva e durações do resto do site. Tudo que depende
+   da classe .motion some para quem pede "reduzir movimento".
+   ========================================================= */
+@keyframes capIn { from { opacity: 0; transform: translateY(12px); } }
+@keyframes slideOut { to { transform: translateX(44px); opacity: 0; } }
+@keyframes fadeOut { to { opacity: 0; } }
+@keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes tick { from { opacity: .25; transform: translateY(6px); } }
+@keyframes waIn { from { opacity: 0; transform: translateY(18px) scale(.7); } }
+@keyframes ring { 0%, 82% { opacity: 0; transform: scale(1); } 86% { opacity: .55; } 100% { opacity: 0; transform: scale(1.75); } }
+@keyframes navIn { from { opacity: 0; transform: translateY(-8px); } }
+
+/* Passarela: a legenda troca com delicadeza e a modelo em destaque "respira" */
+.motion .runway-caption.swap > * { animation: capIn .75s var(--ease) backwards; }
+.motion .runway-caption.swap > :nth-child(2) { animation-delay: .06s; }
+.motion .runway-caption.swap > :nth-child(3) { animation-delay: .12s; }
+.motion .model.is-active .ph { animation: breathe 7s ease-in-out infinite; }
+
+/* Página da peça: fecha deslizando (antes sumia de repente) */
+.product.closing .product-panel { animation: slideOut .42s cubic-bezier(.4, 0, .2, 1) both; }
+.product.closing .product-scrim { animation: fadeOut .42s ease both; }
+
+/* Menu do celular: abre com fade e os links entram em sequência */
+@media (max-width: 900px) {
+  .motion .nav.open { animation: fadeIn .3s ease; }
+  .motion .nav.open a { animation: navIn .55s var(--ease) backwards; }
+  .motion .nav.open a:nth-child(1) { animation-delay: .04s; }
+  .motion .nav.open a:nth-child(2) { animation-delay: .09s; }
+  .motion .nav.open a:nth-child(3) { animation-delay: .14s; }
+  .motion .nav.open a:nth-child(4) { animation-delay: .19s; }
+  .motion .nav.open a:nth-child(5) { animation-delay: .26s; }
+}
+
+/* Barra de progresso e destaque do menu conforme a seção */
+.progress { position: fixed; left: 0; right: 0; top: 0; height: 2px; z-index: 55; pointer-events: none; }
+.progress span { display: block; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+.nav a.active { color: var(--on-dark); }
+.nav a.active::after { transform: scaleX(1); transform-origin: left; }
+
+/* Diferenciais: os ícones se desenham */
+.motion .perk svg :is(path, circle, rect) {
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.7s var(--ease) calc(var(--d, 0ms) + .25s);
+}
+.motion .perk.in svg :is(path, circle, rect) { stroke-dashoffset: 0; }
+
+/* Baggies e "Sobre": as linhas se traçam e os números deslizam */
+.motion .steps li, .motion .facts li { position: relative; border-top-color: transparent; }
+.motion .steps li:last-child { border-bottom-color: transparent; }
+.motion .steps li::before, .motion .facts li::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--line);
+  transform: scaleX(0); transform-origin: left; transition: transform 1.3s var(--ease) calc(var(--d, 0ms) + .1s);
+}
+.motion .steps li::before { background: var(--line-dark); }
+.motion .steps li:last-child::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--line-dark);
+  transform: scaleX(0); transform-origin: left; transition: transform 1.3s var(--ease) calc(var(--d, 0ms) + .45s);
+}
+.motion .steps li.in::before, .motion .facts li.in::before, .motion .steps li.in:last-child::after { transform: scaleX(1); }
+.motion .steps li .step-n {
+  opacity: 0; transform: translateX(-12px);
+  transition: opacity .9s ease calc(var(--d, 0ms) + .25s), transform 1s var(--ease) calc(var(--d, 0ms) + .25s);
+}
+.motion .steps li.in .step-n { opacity: 1; transform: none; }
+
+/* Filtros: o contador pulsa e o aviso de "nenhuma peça" entra com suavidade */
+.motion .tick { animation: tick .55s var(--ease); }
+.motion .empty:not([hidden]) { animation: up .9s var(--ease) backwards; }
+
+/* Fotos fixas entram com fade ao carregar */
+.motion img.pending { opacity: 0; }
+.motion img.ld { animation: fadeIn .9s ease; }
+
+/* WhatsApp flutuante: entra depois da abertura e dá um aviso discreto a cada 9 s */
+.motion .wa-float { animation: waIn .9s var(--ease) 3.4s backwards; }
+.motion .wa-float::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--gold);
+  opacity: 0; pointer-events: none; animation: ring 9s ease-out 6s infinite;
+}
+
+/* Microinterações */
+.footer-cols a {
+  width: fit-content; padding-bottom: 2px;
+  background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+  transition: background-size .5s var(--ease), color .3s;
+}
+.footer-cols a:hover { background-size: 100% 1px; }
+.btn { transition: background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease), box-shadow .35s var(--ease); }
+@media (hover: hover) {
+  .btn-ink:hover, .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 12px 24px -14px rgba(0, 0, 0, .55); }
+  .panel-txt { transition: transform 1.2s cubic-bezier(.33, 0, .15, 1); }
+  .panel:hover .panel-txt, .panel:focus-visible .panel-txt { transform: translateY(-6px); }
+}
+.btn:active { transform: scale(.98); box-shadow: none; }
+.chip:active { transform: scale(.95); }

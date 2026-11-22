@@ -59,8 +59,43 @@
     addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
   }
 
+  /* ---------- Menu destaca a seção que está na tela ---------- */
+  const spy = ['colecao', 'baggies', 'sobre', 'instagram']
+    .map(id => [$(`#${id}`), $(`.nav a[href="#${id}"]`)]).filter(([sec, a]) => sec && a);
+  if (spy.length) {
+    const so = new IntersectionObserver(es => {
+      es.forEach(en => { if (en.isIntersecting) spy.forEach(([sec, a]) => a.classList.toggle('active', sec === en.target)); });
+    }, { rootMargin: '-42% 0px -52% 0px' });
+    spy.forEach(([sec]) => so.observe(sec));
+    // acima da Coleção (topo, diferenciais, "Escolha por estilo") nenhum item fica destacado
+    const above = new IntersectionObserver(es => {
+      if (es.some(en => en.isIntersecting)) spy.forEach(([, a]) => a.classList.remove('active'));
+    }, { rootMargin: '-42% 0px -52% 0px' });
+    $$('.hero, .perks, .explore').forEach(el => above.observe(el));
+  }
+
   if (reduce) return;
   root.classList.add('motion');
+
+  /* ---------- Fotos fixas entram com fade quando terminam de carregar ---------- */
+  $$('.panel img, .baggies-photo img, .feed-item img').forEach(img => {
+    if (img.complete) return;
+    img.classList.add('pending');
+    const ok = () => { img.classList.remove('pending'); img.classList.add('ld'); };
+    img.addEventListener('load', ok, { once: true });
+    img.addEventListener('error', () => img.classList.remove('pending'), { once: true });
+  });
+
+  /* ---------- Ícones dos diferenciais se desenham ao aparecer ---------- */
+  $$('.perk svg :is(path, circle, rect)').forEach(el => el.setAttribute('pathLength', '1'));
+
+  /* ---------- Barra de progresso da página ---------- */
+  const bar = document.createElement('div');
+  bar.className = 'progress';
+  bar.setAttribute('aria-hidden', 'true');
+  bar.innerHTML = '<span></span>';
+  document.body.appendChild(bar);
+  const barFill = bar.firstChild;
 
   /* ---------- Revelações ao rolar ---------- */
   const groups = [
@@ -72,7 +107,8 @@
     ['.facts li', 'rv', 70],
     ['.feed-item', 'rv', 70],
     ['.baggies-photo, .mark-circle', 'rv-img'],
-    ['.footer-in > *', 'rv', 90]
+    ['.footer-in > *', 'rv', 90],
+    ['.mf-sub, .marquee', 'rv']
   ];
   groups.forEach(([sel, cls, step]) => {
     $$(sel).forEach((el, i) => {
@@ -104,6 +140,8 @@
   /* ---------- Manifesto: linhas deslizam com a rolagem ---------- */
   const mf = $('#manifesto');
   const lines = $$('.mf-line');
+  const bagBox = $('.baggies-photo');
+  const bagImg = bagBox && $('img', bagBox);
 
   let ticking = false;
   function onScroll() {
@@ -123,6 +161,16 @@
             const dir = +l.dataset.dir;
             l.style.transform = `translate3d(${(dir * (p - 0.5) * 22).toFixed(2)}vw, 0, 0)`;
           });
+        }
+      }
+      const max = root.scrollHeight - innerHeight;
+      barFill.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max).toFixed(4) : 0})`;
+
+      if (bagBox) {
+        const r = bagBox.getBoundingClientRect();
+        if (r.bottom > 0 && r.top < innerHeight) {
+          const q = (innerHeight - r.top) / (innerHeight + r.height);
+          bagImg.style.transform = `translate3d(0, ${((0.5 - q) * 46).toFixed(1)}px, 0) scale(1.14)`;
         }
       }
       ticking = false;
