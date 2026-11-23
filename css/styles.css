@@ -559,10 +559,6 @@ button { cursor: pointer; }
 /* Topo: o título sobe linha a linha e o restante entra logo em seguida (tudo em cerca de 1 s) */
 .hero-title .ln { display: block; overflow: hidden; padding: 0 .04em .1em; margin-bottom: -.1em; }
 .hero-title .ln > span { display: inline-block; }
-.js .hero-title .ln > span { animation: lineUp .9s var(--ease) .05s backwards; }
-.js .hero-title .ln + .ln > span { animation-delay: .15s; }
-.js .hero-side, .js .runway-stage { animation: up .8s var(--ease) .2s backwards; }
-.js .runway-list, .js .runway-hint, .js .runway-bar { animation: up .8s var(--ease) .3s backwards; }
 
 /* Passarela: o aro do ponto numerado pulsa só na peça em destaque */
 .motion .model.is-active .pin-dot::after { animation: ping 4s var(--ease) 1s infinite; }
@@ -577,9 +573,6 @@ button { cursor: pointer; }
 .header { transition: transform .4s var(--ease); }
 .header.tucked { transform: translateY(-100%); }
 
-/* Entradas ao rolar: um único efeito */
-.motion .rv { opacity: 0; transform: translateY(14px); transition: opacity .7s var(--ease) var(--d, 0ms), transform .8s var(--ease) var(--d, 0ms); }
-.motion .rv.in { opacity: 1; transform: none; }
 
 /* Cartões */
 .card-media { transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
@@ -681,6 +674,102 @@ button { cursor: pointer; }
   .panel { flex-basis: 78%; }
   .mf-outline { -webkit-text-stroke-width: 1px; }
 }
+
+/* =========================================================
+   Movimento com mais presença
+   Tudo que pesaria no carregamento (desfoque, vidro, laços contínuos) continua fora.
+   O que entrou: entradas ao rolar com máscara, ícones e linhas que se
+   desenham, parallax e a passarela que reage ao mouse.
+   ========================================================= */
+@keyframes stageIn { from { transform: translateY(36px) scale(.98); } }
+@keyframes breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes waIn { from { opacity: 0; transform: translateY(18px) scale(.7); } }
+
+/* Topo: o título sobe linha a linha, a passarela sobe de leve e as modelos aparecem uma a uma */
+.js .hero-title .ln > span { animation: lineUp 1s var(--ease) .1s backwards; }
+.js .hero-title .ln + .ln > span { animation-delay: .22s; }
+.js .hero-side { animation: up 1s var(--ease) .35s backwards; }
+.js .runway-stage { animation: stageIn 1.2s var(--ease) .3s backwards; }
+.js .model { animation: fadeIn .9s ease backwards; animation-delay: calc(var(--i, 0) * 80ms + .55s); }
+.intro-on .model { animation-delay: calc(var(--i, 0) * 60ms + .25s); } /* aparecem por trás da cortina; ao subir, a passarela já está montada */
+.js .runway-list, .js .runway-hint, .js .runway-bar { animation: up .9s var(--ease) .55s backwards; }
+
+/* Passarela: a modelo em destaque respira e todas se deslocam de leve com o mouse (cada uma conforme a profundidade) */
+.model .ph { translate: calc(var(--mx, 0) * var(--dp, 1) * -18px) 0; transition: translate .8s var(--ease); }
+.motion .model.is-active .ph { animation: breathe 8s ease-in-out infinite; }
+
+/* Entradas ao rolar: subida mais longa, títulos e imagens por máscara */
+.motion .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease) var(--d, 0ms), transform 1.1s var(--ease) var(--d, 0ms); }
+.motion .rv.in { opacity: 1; transform: none; }
+.motion .rv-title { clip-path: inset(-10% -4% 100% -4%); transform: translateY(24px); transition: clip-path 1.1s var(--ease), transform 1.1s var(--ease); }
+.motion .rv-title.in { clip-path: inset(-10% -4% -25% -4%); transform: none; }
+.motion .rv-img { clip-path: inset(18% 0 0 0 round 6px); transform: scale(.97); transition: clip-path 1.2s var(--ease), transform 1.2s var(--ease); }
+.motion .rv-img.in { clip-path: inset(0 0 0 0 round 6px); transform: none; }
+.motion .mark-circle.rv-img { clip-path: circle(0% at 50% 50%); }
+.motion .mark-circle.rv-img.in { clip-path: circle(75% at 50% 50%); }
+
+/* Diferenciais: os ícones se desenham */
+.motion .perk svg :is(path, circle, rect) {
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s var(--ease) calc(var(--d, 0ms) + .25s);
+}
+.motion .perk.in svg :is(path, circle, rect) { stroke-dashoffset: 0; }
+
+/* Baggies e "Sobre": as linhas se traçam e os números deslizam */
+.motion .steps li, .motion .facts li { position: relative; border-top-color: transparent; }
+.motion .steps li:last-child { border-bottom-color: transparent; }
+.motion .steps li::before, .motion .facts li::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--line);
+  transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease) calc(var(--d, 0ms) + .1s);
+}
+.motion .steps li::before { background: var(--line-dark); }
+.motion .steps li:last-child::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--line-dark);
+  transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease) calc(var(--d, 0ms) + .45s);
+}
+.motion .steps li.in::before, .motion .facts li.in::before, .motion .steps li.in:last-child::after { transform: scaleX(1); }
+.motion .steps li .step-n {
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity .9s ease calc(var(--d, 0ms) + .25s), transform 1s var(--ease) calc(var(--d, 0ms) + .25s);
+}
+.motion .steps li.in .step-n { opacity: 1; transform: none; }
+
+/* Barra de progresso fina no topo da página */
+.progress { position: fixed; left: 0; right: 0; top: 0; height: 2px; z-index: 55; pointer-events: none; }
+.progress span { display: block; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+
+/* WhatsApp flutuante entra depois do topo */
+.motion .wa-float { animation: waIn .9s var(--ease) .9s backwards; }
+.intro-on .wa-float { animation-delay: 2.5s; }
+
+/* Microinterações: botões sobem, o texto do painel acompanha */
+.btn { transition: background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease), transform .35s var(--ease), box-shadow .35s var(--ease); }
+@media (hover: hover) {
+  .btn-ink:hover, .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 14px 26px -14px rgba(0, 0, 0, .55); }
+  .panel-txt { transition: transform 1.2s cubic-bezier(.33, 0, .15, 1); }
+  .panel:hover .panel-txt, .panel:focus-visible .panel-txt { transform: translateY(-8px); }
+}
+.btn:active { transform: scale(.98); box-shadow: none; }
+
+
+/* Abertura: o logo sobe, a cortina chocolate se levanta e o topo entra logo atrás dela.
+   Só usa transform e opacidade (movimento leve) e termina sozinha mesmo se o JavaScript falhar. */
+@keyframes introOut { to { transform: translateY(-100%); visibility: hidden; } }
+.intro { display: none; }
+.intro-on .intro {
+  position: fixed; inset: 0; z-index: 400; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  background: var(--choc); color: var(--on-dark); cursor: pointer;
+  animation: introOut .9s cubic-bezier(.76, 0, .24, 1) 1.15s forwards;
+}
+.intro-logo { display: flex; gap: .16em; padding: .08em .06em .14em; overflow: hidden; font: 400 clamp(54px, 9vw, 120px)/1 var(--serif); }
+.intro-a, .intro-b { display: inline-block; animation: lineUp .9s var(--ease) .1s backwards; }
+.intro-b { color: var(--gold); animation-delay: .22s; }
+.intro-tag { margin: 0; font: 600 12px/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--on-dark-2); animation: fadeIn .6s ease .5s backwards; }
+/* a passarela já está no lugar atrás da cortina; só o texto espera ela subir */
+.intro-on .hero-title .ln > span { animation-delay: 1.3s; }
+.intro-on .hero-title .ln + .ln > span { animation-delay: 1.4s; }
+.intro-on .hero-side { animation-delay: 1.45s; }
+.intro-on .runway-list, .intro-on .runway-hint, .intro-on .runway-bar { animation-delay: 1.6s; }
 
 /* Quem pede "reduzir movimento" vê tudo parado e já no lugar */
 @media (prefers-reduced-motion: reduce) {

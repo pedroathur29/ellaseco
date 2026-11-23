@@ -48,6 +48,7 @@
     const el = document.createElement('div');
     el.className = 'model' + (p.photos.length ? ' has-photo' : '') + (p.cut ? ' cut' : '');
     if (p.ratio) el.style.setProperty('--ratio', p.ratio);
+    el.style.setProperty('--i', i); // ordem de entrada das modelos
     el.setAttribute('role', 'option');
     el.innerHTML =
       media(p, 'lg', false, { sizes: `(max-width: 640px) ${(p.ratio * 50).toFixed(1)}vh, 300px`, priority: (i <= 1 || i === N - 1) ? 'high' : 'low' }) +
@@ -90,6 +91,7 @@
       el.style.transform = `translate3d(calc(-50% + ${x.toFixed(1)}px), ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
       el.style.opacity = (Math.pow(Math.min(1, Math.max(0, (depth - 0.1) / 0.65)), 1.2) * (0.8 + 0.2 * depth)).toFixed(3);
       el.style.zIndex = Math.round(depth * 100);
+      el.style.setProperty('--dp', depth.toFixed(3)); // profundidade: quanto a modelo acompanha o mouse
     });
     const a = mod(Math.round(pos), N);
     if (a !== active) setActive(a);

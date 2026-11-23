@@ -11,8 +11,8 @@
   <meta property="og:description" content="Boutique virtual feminina do P ao GG. Envios para todo o Brasil.">
   <meta property="og:locale" content="pt_BR">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23F3EFE0'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%231E1C19'%3EE%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="css/styles.css?v=20261122j">
-  <script src="js/products.js?v=20261122j"></script>
+  <link rel="stylesheet" href="css/styles.css?v=20261122m">
+  <script src="js/products.js?v=20261122m"></script>
   <script>
     /* Adianta o download das 3 fotos visíveis da passarela (a da frente e as duas ao lado).
        Lê o próprio catálogo, então continua certo quando as fotos forem trocadas.
@@ -31,7 +31,16 @@
       });
     })();
   </script>
-  <script>document.documentElement.classList.add('js');</script>
+  <script>
+    /* marca que o JavaScript está ativo; a abertura toca só na primeira visita da sessão */
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      try {
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('ellas-intro')) d.classList.add('intro-on');
+      } catch (e) {}
+    })();
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -45,6 +54,10 @@
   </script>
 </head>
 <body>
+  <div class="intro" aria-hidden="true">
+    <div class="intro-logo"><span class="intro-a">Ella’s</span><span class="intro-b">&amp;Co.</span></div>
+    <p class="intro-tag">Inspirando seu autêntico estilo</p>
+  </div>
   <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-label"></span></div>
 
   <a class="skip" href="#colecao">Pular para a coleção</a>
@@ -322,8 +335,8 @@
     <article class="product-panel" id="product-panel"></article>
   </div>
 
-  <script src="js/figures.js?v=20261122j"></script>
-  <script src="js/app.js?v=20261122j"></script>
-  <script src="js/motion.js?v=20261122j"></script>
+  <script src="js/figures.js?v=20261122m"></script>
+  <script src="js/app.js?v=20261122m"></script>
+  <script src="js/motion.js?v=20261122m"></script>
 </body>
 </html>
