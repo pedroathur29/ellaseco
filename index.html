@@ -11,17 +11,27 @@
   <meta property="og:description" content="Boutique virtual feminina do P ao GG. Envios para todo o Brasil.">
   <meta property="og:locale" content="pt_BR">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23F3EFE0'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='28' text-anchor='middle' fill='%231E1C19'%3EE%3C/text%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=20261122j">
+  <script src="js/products.js?v=20261122j"></script>
   <script>
-    try {
-      var d = document.documentElement;
-      d.classList.add('js');
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !sessionStorage.getItem('ellas-intro')) d.classList.add('intro-on');
-    } catch (e) {}
+    /* Adianta o download das 3 fotos visíveis da passarela (a da frente e as duas ao lado).
+       Lê o próprio catálogo, então continua certo quando as fotos forem trocadas.
+       A conta de srcset/sizes é a mesma de media() em js/app.js. */
+    (function () {
+      var P = window.ELLAS.products, N = P.length;
+      [0, 1, N - 1].forEach(function (i) {
+        var p = P[i];
+        if (!p || !p.photos.length || !p.ratio) return;
+        var full = p.photos[0], sm = full.replace(/\.(webp|png|jpg)$/i, '-sm.$1');
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'image'; l.href = sm;
+        l.setAttribute('imagesrcset', sm + ' ' + Math.round(p.ratio * 900) + 'w, ' + full + ' ' + Math.round(p.ratio * 1600) + 'w');
+        l.setAttribute('imagesizes', '(max-width: 640px) ' + (p.ratio * 50).toFixed(1) + 'vh, 300px');
+        document.head.appendChild(l);
+      });
+    })();
   </script>
+  <script>document.documentElement.classList.add('js');</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -35,10 +45,6 @@
   </script>
 </head>
 <body>
-  <div class="intro" aria-hidden="true">
-    <div class="intro-logo"><span class="intro-a">Ella’s</span><span class="intro-b">&amp;Co.</span></div>
-    <p class="intro-tag">Inspirando seu autêntico estilo</p>
-  </div>
   <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-label"></span></div>
 
   <a class="skip" href="#colecao">Pular para a coleção</a>
@@ -62,7 +68,7 @@
         <a href="#instagram">Instagram</a>
         <a class="nav-wa" data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#">Falar no WhatsApp</a>
       </nav>
-      <a class="btn btn-ink btn-sm" data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#">
+      <a class="btn btn-ink btn-sm" data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#" aria-label="Falar no WhatsApp">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8.4c.3-.6.6-.6.9-.6h.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.7 1.2 1.6 2 2.8 2.6.2.1.4.1.5-.1l.6-.7c.2-.2.4-.2.6-.1l1.5.7c.2.1.4.2.4.4 0 .5-.1 1.2-.7 1.6-.5.4-1.6.7-3.2-.1-1.8-.9-3.4-2.6-4.2-4.2-.6-1.2-.3-2.3 0-2.8z" fill="currentColor"/></svg>
         <span>WhatsApp</span>
       </a>
@@ -96,8 +102,8 @@
         <div class="runway-bar">
           <div class="runway-caption" aria-live="polite">
             <span class="rc-num" id="rc-num">01 / 06</span>
-            <span class="rc-name" id="rc-name"></span>
-            <span class="rc-price" id="rc-price"></span>
+            <span class="rc-name" id="rc-name">&nbsp;</span>
+            <span class="rc-price" id="rc-price">&nbsp;</span>
           </div>
           <div class="runway-ctrl">
             <button class="round" id="rw-prev" aria-label="Peça anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
@@ -136,19 +142,19 @@
         </div>
         <div class="panels">
           <a class="panel" href="#colecao" data-filter="Vestidos">
-            <img src="img/insta/vestido-leve-bolsos.webp" alt="" loading="lazy" decoding="async">
+            <img src="img/insta/vestido-leve-bolsos.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
             <span class="panel-txt"><span class="panel-name">Vestidos</span><span class="panel-meta" data-count="Vestidos"></span></span>
           </a>
           <a class="panel" href="#colecao" data-filter="Conjuntos">
-            <img src="img/insta/conjunto-bata-alfaiataria.webp" alt="" loading="lazy" decoding="async">
+            <img src="img/insta/conjunto-bata-alfaiataria.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
             <span class="panel-txt"><span class="panel-name">Conjuntos</span><span class="panel-meta" data-count="Conjuntos"></span></span>
           </a>
           <a class="panel" href="#baggies">
-            <img class="panel-bag" src="img/marca/collection-bag.jpg" alt="" loading="lazy" decoding="async">
+            <img class="panel-bag" src="img/marca/collection-bag.jpg" alt="" loading="lazy" fetchpriority="low" decoding="async">
             <span class="panel-txt"><span class="panel-name">Baggies</span><span class="panel-meta">Experimente em casa</span></span>
           </a>
           <a class="panel" href="https://www.instagram.com/ellas.eco/" target="_blank" rel="noopener">
-            <img src="img/insta/vestido-midi-couro.webp" alt="" loading="lazy" decoding="async">
+            <img src="img/insta/vestido-midi-couro.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
             <span class="panel-txt"><span class="panel-name">Novidades</span><span class="panel-meta">no Instagram</span></span>
           </a>
         </div>
@@ -222,7 +228,7 @@
     <section class="baggies" id="baggies" aria-labelledby="baggies-title">
       <div class="wrap baggies-in">
         <figure class="baggies-photo">
-          <img src="img/marca/collection-bag.jpg" alt="Mala vermelha da Collection Bag Ella's &amp; Co. pronta para levar as peças até a cliente" loading="lazy" decoding="async">
+          <img src="img/marca/collection-bag.jpg" alt="Mala vermelha da Collection Bag Ella's &amp; Co. pronta para levar as peças até a cliente" loading="lazy" fetchpriority="low" decoding="async">
         </figure>
         <div>
         <div class="baggies-head">
@@ -284,16 +290,16 @@
       </div>
       <div class="footer-cols">
         <div>
-          <h4>Contato</h4>
+          <h3>Contato</h3>
           <a data-wa="Olá! Vim pelo site da Ella's & Co. e gostaria de atendimento." href="#">WhatsApp (19) 99124-1449</a>
           <a href="https://www.instagram.com/ellas.eco/" target="_blank" rel="noopener">Instagram @ellas.eco</a>
         </div>
         <div>
-          <h4>Onde estamos</h4>
+          <h3>Onde estamos</h3>
           <p>Nova Odessa – SP<br>Atendimento em Nova Odessa e região<br>Envios para todo o Brasil</p>
         </div>
         <div>
-          <h4>Navegue</h4>
+          <h3>Navegue</h3>
           <a href="#colecao">Coleção</a>
           <a href="#baggies">Baggies</a>
           <a href="#sobre">Sobre</a>
@@ -316,9 +322,8 @@
     <article class="product-panel" id="product-panel"></article>
   </div>
 
-  <script src="js/products.js"></script>
-  <script src="js/figures.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/motion.js"></script>
+  <script src="js/figures.js?v=20261122j"></script>
+  <script src="js/app.js?v=20261122j"></script>
+  <script src="js/motion.js?v=20261122j"></script>
 </body>
 </html>

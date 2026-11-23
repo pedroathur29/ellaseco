@@ -17,12 +17,17 @@
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pad = n => String(n).padStart(2, '0');
   const href = p => `#/peca/${p.slug}`;
-  const small = src => src.replace(/\.jpg$/i, '-sm.jpg');
+  const small = src => src.replace(/\.(webp|png|jpg)$/i, '-sm.$1');
   // Foto real da peça (ou ilustração provisória, se ainda não houver foto)
-  function media(p, size, lazy) {
+  // opts.sizes → o navegador escolhe entre a miniatura e a foto grande conforme a tela
+  // opts.priority → 'high' ou 'low': quais fotos o navegador baixa primeiro
+  function media(p, size, lazy, opts = {}) {
     if (!p.photos.length) return figure(p.look, products.indexOf(p), `Ilustração provisória: ${p.name}`);
-    const src = size === 'sm' ? small(p.photos[0]) : p.photos[0];
-    return `<img class="ph" src="${esc(src)}" alt="${esc(p.name)}" style="object-position:${esc(p.pos || 'center')}" ${lazy ? 'loading="lazy"' : ''} decoding="async" draggable="false">`;
+    const full = p.photos[0], sm = small(full);
+    const src = size === 'sm' ? sm : full;
+    const srcset = opts.sizes && p.ratio
+      ? ` srcset="${esc(sm)} ${Math.round(p.ratio * 900)}w, ${esc(full)} ${Math.round(p.ratio * 1600)}w" sizes="${opts.sizes}"` : '';
+    return `<img class="ph" src="${esc(src)}"${srcset} alt="${esc(p.name)}" style="object-position:${esc(p.pos || 'center')}"${lazy ? ' loading="lazy"' : ''}${opts.priority ? ` fetchpriority="${opts.priority}"` : ''} decoding="async" draggable="false">`;
   }
 
   /* ---------- Links genéricos de WhatsApp ---------- */
@@ -45,8 +50,8 @@
     if (p.ratio) el.style.setProperty('--ratio', p.ratio);
     el.setAttribute('role', 'option');
     el.innerHTML =
-      media(p, 'lg', false) +
-      `<a class="pin" href="${href(p)}" style="left:${p.pin[0] * 100}%;top:${p.pin[1] * 100}%" aria-label="Ver ${esc(p.name)}, ${money(p.price)}">
+      media(p, 'lg', false, { sizes: `(max-width: 640px) ${(p.ratio * 50).toFixed(1)}vh, 300px`, priority: (i <= 1 || i === N - 1) ? 'high' : 'low' }) +
+      `<a class="pin" href="${href(p)}" style="left:${p.pin[0] * 100}%;top:${p.pin[1] * 100}%" tabindex="${i === 0 ? 0 : -1}">
         <span class="pin-dot">${i + 1}</span><span class="pin-tag"><b>${esc(p.name)}</b>${money(p.price)}</span></a>`;
     stage.appendChild(el);
     return el;
@@ -66,14 +71,14 @@
   const mod = (n, m) => ((n % m) + m) % m;
 
   function radius() {
-    const w = stage.clientWidth;
+    const w = innerWidth;
     const photos = products.some(p => p.photos.length);
     if (w < 640) return w * (photos ? 0.4 : 0.34);
     return Math.min(w * (photos ? 0.3 : 0.24), photos ? 440 : 360);
   }
 
+  let R = 0;
   function render() {
-    const R = radius();
     models.forEach((el, i) => {
       let d = i - pos;
       d = mod(d + N / 2, N) - N / 2;
@@ -84,27 +89,33 @@
       const y = -(1 - depth) * 34;
       el.style.transform = `translate3d(calc(-50% + ${x.toFixed(1)}px), ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
       el.style.opacity = (Math.pow(Math.min(1, Math.max(0, (depth - 0.1) / 0.65)), 1.2) * (0.8 + 0.2 * depth)).toFixed(3);
-      el.style.filter = depth > 0.97 ? 'none' : `blur(${((1 - depth) * 2.6).toFixed(2)}px) saturate(${(0.6 + 0.4 * depth).toFixed(2)})`;
       el.style.zIndex = Math.round(depth * 100);
     });
     const a = mod(Math.round(pos), N);
     if (a !== active) setActive(a);
   }
 
+  let capReady = false;
   function setActive(a) {
     active = a;
     const p = products[a];
     models.forEach((el, i) => {
       el.classList.toggle('is-active', i === a);
       el.setAttribute('aria-selected', i === a);
+      const pin = el.querySelector('.pin');
+      if (pin) pin.tabIndex = i === a ? 0 : -1;
     });
     $$('button', list).forEach(b => b.setAttribute('aria-current', +b.dataset.i === a));
     $('#rc-num').textContent = `${pad(a + 1)} / ${pad(N)}`;
     $('#rc-name').textContent = p.name;
     $('#rc-price').textContent = money(p.price);
     $('#rc-link').href = href(p);
-    const cap = $('.runway-caption');
-    cap.classList.remove('swap'); void cap.offsetWidth; cap.classList.add('swap');
+    if (capReady && !reduceMotion) { // a legenda troca com um fade curto (não na primeira vez)
+      $$('.runway-caption > *').forEach((el, k) => el.animate(
+        [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 500, delay: k * 50, easing: 'cubic-bezier(.22, .8, .24, 1)', fill: 'backwards' }));
+    }
+    capReady = true;
     $$('button', dots).forEach((b, i) => b.setAttribute('aria-current', i === a));
   }
 
@@ -215,7 +226,8 @@
     }, 4500);
     new IntersectionObserver(([en]) => { heroVisible = en.isIntersecting; }, { threshold: 0.3 }).observe(stage);
   }
-  addEventListener('resize', render);
+  addEventListener('resize', () => { R = radius(); render(); });
+  R = radius();
   render();
 
   /* =================================================
@@ -260,8 +272,6 @@
     $('#grid').innerHTML = out.map(card).join('');
     $('#empty').hidden = out.length > 0;
     $('#result-count').textContent = out.length === 1 ? '1 peça' : `${out.length} peças`;
-    const rcEl = $('#result-count');
-    rcEl.classList.remove('tick'); void rcEl.offsetWidth; rcEl.classList.add('tick');
     $('#clear-inline').hidden = !(state.q || state.cat !== 'Todas' || state.size || state.price !== 'all');
   }
 
@@ -295,7 +305,7 @@
   /* Vitrine do Instagram (fotos de publicações do perfil) */
   $('#highlights').innerHTML = (window.ELLAS.feed || []).map(f =>
     `<li class="feed-item"><a href="${window.ELLAS.instagram}" target="_blank" rel="noopener" aria-label="${esc(f.alt)}: ver no Instagram @ellas.eco">
-      <img src="${esc(f.src)}" alt="${esc(f.alt)}" loading="lazy" decoding="async">
+      <img src="${esc(f.src)}" alt="${esc(f.alt)}" loading="lazy" fetchpriority="low" decoding="async">
       <span class="feed-hover" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></svg></span></a></li>`).join('');
 
   /* =================================================

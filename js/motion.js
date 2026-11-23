@@ -1,8 +1,8 @@
 /*
  * Ella's & Co. — movimento
- * Abertura, cursor com rótulo, revelações ao rolar, manifesto que desliza,
- * esteira de peças e cabeçalho que se recolhe. Tudo desligado quando o
- * sistema pede "reduzir movimento".
+ * Poucas animações, todas com o mesmo ritmo: entradas curtas ao rolar, painéis,
+ * manifesto que desliza, esteira de peças, cabeçalho que se recolhe e cursor.
+ * Quem pede "reduzir movimento" no sistema vê o site sem elas.
  */
 (() => {
   'use strict';
@@ -12,16 +12,7 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const { products } = window.ELLAS;
 
-  /* ---------- Abertura (só na primeira visita da sessão) ---------- */
-  const intro = $('.intro');
-  if (root.classList.contains('intro-on')) {
-    try { sessionStorage.setItem('ellas-intro', '1'); } catch (e) {}
-    setTimeout(() => { intro && intro.remove(); root.classList.remove('intro-on'); root.classList.add('intro-done'); }, 2500);
-  } else if (intro) {
-    intro.remove();
-  }
-
-  /* ---------- Contagem dos painéis "Escolha por estilo" ---------- */
+  /* ---------- Painéis "Escolha por estilo": contagem e atalho para o filtro ---------- */
   $$('[data-count]').forEach(el => {
     const n = products.filter(p => p.category === el.dataset.count).length;
     el.textContent = n === 1 ? '1 peça' : `${n} peças`;
@@ -31,10 +22,11 @@
     if (chip && chip.getAttribute('aria-pressed') !== 'true') chip.click();
   }));
 
-  /* ---------- Esteira de peças (manifesto) ---------- */
+  /* ---------- Esteira de peças ---------- */
+  const marquee = $('.marquee');
   const track = $('#marquee');
   if (track) {
-    const one = products.map(p => `<a class="mq-item" href="#/peca/${p.slug}" tabindex="-1"><img src="${p.photos[0].replace(/\.(webp|png|jpg)$/i, '-sm.$1')}" alt=""><span>${p.name}</span></a>`).join('');
+    const one = products.map(p => `<a class="mq-item" href="#/peca/${p.slug}" tabindex="-1"><img src="${p.photos[0].replace(/\.(webp|png|jpg)$/i, '-sm.$1')}" alt="" width="${Math.round((p.ratio || .42) * 170)}" height="170" fetchpriority="low" decoding="async"><span>${p.name}</span></a>`).join('');
     // A faixa anda metade do próprio comprimento e recomeça. Para nunca aparecer
     // espaço vazio, cada metade precisa ser MAIOR que a largura da tela:
     // medimos um conjunto e repetimos quantas vezes for preciso.
@@ -52,139 +44,92 @@
       track.style.animationDuration = Math.max(20, halfW / 55).toFixed(1) + 's'; // ~55 px por segundo
       track.style.animationName = ''; // volta ao nome definido no CSS e reinicia
     };
-    build();
-    // as fotos pequenas mudam a largura ao carregar: refaz uma vez quando terminarem
-    addEventListener('load', () => { built = 0; build(); });
-    let rt;
-    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+    // A esteira fica bem abaixo da dobra: só é montada (e medida) quando está perto de aparecer,
+    // e para quando sai da tela, para não gastar bateria à toa.
+    let started = false, rt;
+    new IntersectionObserver(([en]) => {
+      if (en.isIntersecting && !started) {
+        started = true;
+        build();
+        addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+      }
+      marquee.classList.toggle('off', !en.isIntersecting);
+    }, { rootMargin: '800px 0px' }).observe(marquee);
   }
 
   /* ---------- Menu destaca a seção que está na tela ---------- */
   const spy = ['colecao', 'baggies', 'sobre', 'instagram']
     .map(id => [$(`#${id}`), $(`.nav a[href="#${id}"]`)]).filter(([sec, a]) => sec && a);
   if (spy.length) {
+    const band = { rootMargin: '-42% 0px -52% 0px' };
     const so = new IntersectionObserver(es => {
       es.forEach(en => { if (en.isIntersecting) spy.forEach(([sec, a]) => a.classList.toggle('active', sec === en.target)); });
-    }, { rootMargin: '-42% 0px -52% 0px' });
+    }, band);
     spy.forEach(([sec]) => so.observe(sec));
     // acima da Coleção (topo, diferenciais, "Escolha por estilo") nenhum item fica destacado
     const above = new IntersectionObserver(es => {
       if (es.some(en => en.isIntersecting)) spy.forEach(([, a]) => a.classList.remove('active'));
-    }, { rootMargin: '-42% 0px -52% 0px' });
+    }, band);
     $$('.hero, .perks, .explore').forEach(el => above.observe(el));
   }
 
   if (reduce) return;
   root.classList.add('motion');
 
-  /* ---------- Fotos fixas entram com fade quando terminam de carregar ---------- */
-  $$('.panel img, .baggies-photo img, .feed-item img').forEach(img => {
-    if (img.complete) return;
-    img.classList.add('pending');
-    const ok = () => { img.classList.remove('pending'); img.classList.add('ld'); };
-    img.addEventListener('load', ok, { once: true });
-    img.addEventListener('error', () => img.classList.remove('pending'), { once: true });
-  });
-
-  /* ---------- Ícones dos diferenciais se desenham ao aparecer ---------- */
-  $$('.perk svg :is(path, circle, rect)').forEach(el => el.setAttribute('pathLength', '1'));
-
-  /* ---------- Barra de progresso da página ---------- */
-  const bar = document.createElement('div');
-  bar.className = 'progress';
-  bar.setAttribute('aria-hidden', 'true');
-  bar.innerHTML = '<span></span>';
-  document.body.appendChild(bar);
-  const barFill = bar.firstChild;
-
-  /* ---------- Revelações ao rolar ---------- */
+  /* ---------- Entradas ao rolar: um único efeito (fade + subida curta) ---------- */
   const groups = [
-    ['.sec-head .display-2, .baggies-head .display-2, .about .display-2', 'rv-title'],
-    ['.sec-note, .lead, .baggies .btn, .fine, .filters, .result-row', 'rv'],
-    ['.perk', 'rv', 90],
-    ['.panel', 'rv', 90],
-    ['.steps li', 'rv', 110],
-    ['.facts li', 'rv', 70],
-    ['.feed-item', 'rv', 70],
-    ['.baggies-photo, .mark-circle', 'rv-img'],
-    ['.footer-in > *', 'rv', 90],
-    ['.mf-sub, .marquee', 'rv']
+    ['.sec-head, .filters, .baggies-head, .baggies-photo, .about-mark, .about-in > div:last-child, .mf-sub, .marquee, .panels'],
+    ['.perk', 90],
+    ['.steps li', 100],
+    ['.feed-item', 60],
+    ['.footer-in > *', 90]
   ];
-  groups.forEach(([sel, cls, step]) => {
+  groups.forEach(([sel, step]) => {
     $$(sel).forEach((el, i) => {
-      el.classList.add(cls);
+      el.classList.add('rv');
       if (step) el.style.setProperty('--d', `${(i % 6) * step}ms`);
     });
   });
-  // Elementos com clip-path inicial têm área visível zero para o observador;
-  // por isso observamos o pai (sem recorte) e revelamos os filhos dele.
-  const waiting = new Map();
   const io = new IntersectionObserver(entries => {
     entries.forEach(en => {
       if (!en.isIntersecting) return;
-      (waiting.get(en.target) || []).forEach(el => el.classList.add('in'));
-      waiting.delete(en.target);
+      en.target.classList.add('in');
       io.unobserve(en.target);
     });
-  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
-  $$('.rv, .rv-title, .rv-img').forEach(el => {
-    const target = el.matches('.rv-title, .rv-img') ? el.parentElement : el;
-    if (!waiting.has(target)) { waiting.set(target, []); io.observe(target); }
-    waiting.get(target).push(el);
-  });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  $$('.rv').forEach(el => io.observe(el));
 
-  /* ---------- Cabeçalho recolhe ao descer, volta ao subir ---------- */
+  /* ---------- Cabeçalho recolhe ao descer; manifesto desliza com a rolagem ---------- */
   const header = $('.header');
-  let lastY = scrollY;
-
-  /* ---------- Manifesto: linhas deslizam com a rolagem ---------- */
+  const nav = $('#nav');
   const mf = $('#manifesto');
   const lines = $$('.mf-line');
-  const bagBox = $('.baggies-photo');
-  const bagImg = bagBox && $('img', bagBox);
+  let lastY = scrollY, mfOn = false, ticking = false;
+  if (mf) new IntersectionObserver(([en]) => { mfOn = en.isIntersecting; onScroll(); }).observe(mf);
 
-  let ticking = false;
   function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
       const y = scrollY;
-      const down = y > lastY;
-      header.classList.toggle('tucked', down && y > 320 && !$('.nav.open'));
+      header.classList.toggle('tucked', y > lastY && y > 320 && !nav.classList.contains('open'));
       lastY = y;
-
-      if (mf) {
+      if (mfOn) { // só mede a seção enquanto ela está na tela
         const r = mf.getBoundingClientRect();
-        if (r.bottom > 0 && r.top < innerHeight) {
-          const p = (innerHeight - r.top) / (innerHeight + r.height); // 0 → 1 enquanto atravessa a tela
-          lines.forEach(l => {
-            const dir = +l.dataset.dir;
-            l.style.transform = `translate3d(${(dir * (p - 0.5) * 22).toFixed(2)}vw, 0, 0)`;
-          });
-        }
-      }
-      const max = root.scrollHeight - innerHeight;
-      barFill.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max).toFixed(4) : 0})`;
-
-      if (bagBox) {
-        const r = bagBox.getBoundingClientRect();
-        if (r.bottom > 0 && r.top < innerHeight) {
-          const q = (innerHeight - r.top) / (innerHeight + r.height);
-          bagImg.style.transform = `translate3d(0, ${((0.5 - q) * 46).toFixed(1)}px, 0) scale(1.14)`;
-        }
+        const p = (innerHeight - r.top) / (innerHeight + r.height); // 0 → 1 enquanto atravessa a tela
+        lines.forEach(l => { l.style.transform = `translate3d(${(+l.dataset.dir * (p - 0.5) * 22).toFixed(2)}vw, 0, 0)`; });
       }
       ticking = false;
     });
   }
   addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
 
   /* ---------- Cursor com rótulo (só mouse de precisão) ---------- */
   const cursor = $('#cursor');
   if (cursor && matchMedia('(hover: hover) and (pointer: fine)').matches) {
     const label = $('.cursor-label', cursor);
     root.classList.add('has-cursor');
-    let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, shown = false;
+    let x = 0, y = 0, cx = 0, cy = 0, shown = false, raf = 0;
     const LABELS = [
       ['.runway-stage', 'Arraste'],
       ['.card a, .mq-item', 'Ver peça'],
@@ -192,9 +137,16 @@
       ['.feed-item a', 'Abrir'],
       ['.baggies-photo', 'Baggies']
     ];
+    // o laço só roda enquanto o cursor ainda está alcançando o mouse
+    const follow = () => {
+      cx += (x - cx) * 0.22; cy += (y - cy) * 0.22;
+      cursor.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
+      raf = (Math.abs(x - cx) > 0.2 || Math.abs(y - cy) > 0.2) ? requestAnimationFrame(follow) : 0;
+    };
     addEventListener('pointermove', e => {
       x = e.clientX; y = e.clientY;
       if (!shown) { shown = true; cx = x; cy = y; cursor.classList.add('on'); }
+      if (!raf) raf = requestAnimationFrame(follow);
       const t = e.target;
       const hit = LABELS.find(([sel]) => t.closest && t.closest(sel));
       const pin = t.closest && t.closest('.pin');
@@ -208,10 +160,5 @@
     document.addEventListener('pointerleave', () => { cursor.classList.remove('on'); shown = false; });
     addEventListener('pointerdown', () => cursor.classList.add('press'));
     addEventListener('pointerup', () => cursor.classList.remove('press'));
-    (function loop() {
-      cx += (x - cx) * 0.2; cy += (y - cy) * 0.2;
-      cursor.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
-      requestAnimationFrame(loop);
-    })();
   }
 })();
