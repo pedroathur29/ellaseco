@@ -422,8 +422,9 @@ button { cursor: pointer; }
 .pd-nav { display: flex; align-items: center; gap: 10px; font: 600 11px/1 var(--sans); letter-spacing: .14em; color: var(--on-dark-2); }
 .pd-nav .round { width: 40px; height: 40px; background: transparent; border-color: rgba(241, 234, 220, .35); color: var(--on-dark); }
 .pd-nav .round:hover { background: var(--on-dark); color: var(--choc); }
+.pd-sticky { position: sticky; top: 96px; display: grid; gap: 12px; align-content: start; }
 .pd-media {
-  position: sticky; top: 64px; align-self: start; padding: 28px; display: grid; gap: 12px; align-content: start;
+  align-self: stretch; padding: 28px; min-width: 0; /* ocupa a linha inteira; quem acompanha a rolagem é o .pd-sticky */
   background: radial-gradient(ellipse 70% 60% at 50% 70%, #EADFCB 0%, var(--sand-2) 80%);
 }
 .pd-main { position: relative; aspect-ratio: 4 / 5; display: flex; align-items: flex-end; justify-content: center; }
@@ -492,7 +493,7 @@ button { cursor: pointer; }
   .perk + .perk { border-top: 1px solid var(--line); }
   .sec-head { flex-direction: column; align-items: flex-start; gap: 16px; }
   .product-panel { grid-template-columns: 1fr; width: 100%; }
-  .pd-media { position: static; }
+  .pd-sticky { position: static; }
   .pd-main.has-photo { height: 64vh; }
   .pd-info { padding-top: 28px; }
   .pd-cta {

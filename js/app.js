@@ -337,8 +337,10 @@
         </div>
       </div>
       <div class="pd-media">
-        <div class="pd-main${p.photos.length ? ' has-photo' : ''}">${p.photos.length ? '' : '<span class="tag tag-photo">Ilustração · foto em breve</span>'}${photo}</div>
-        ${slots ? `<div class="pd-thumbs">${slots}</div>` : ''}
+        <div class="pd-sticky">
+          <div class="pd-main${p.photos.length ? ' has-photo' : ''}">${p.photos.length ? '' : '<span class="tag tag-photo">Ilustração · foto em breve</span>'}${photo}</div>
+          ${slots ? `<div class="pd-thumbs">${slots}</div>` : ''}
+        </div>
       </div>
       <div class="pd-info">
         <span class="pd-crumb">Coleção · ${esc(p.category)}</span>
