@@ -772,6 +772,42 @@ button { cursor: pointer; }
 .intro-on .hero-side { animation-delay: 1.45s; }
 .intro-on .runway-list, .intro-on .runway-hint, .intro-on .runway-bar { animation-delay: 1.6s; }
 
+/* ---------- Áreas de toque (mínimo de 44 px) ---------- */
+.header .logo { padding: 7px 0; }
+.btn-sm, .chip, .f-price select { min-height: 44px; }
+.f-price select { height: 44px; }
+.pd-nav .round { width: 44px; height: 44px; }
+.pd-back { min-width: 44px; }
+.link-clear { min-height: 44px; }
+/* o ponto continua com 32 px na tela; só a área que recebe o toque cresce */
+.pin::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; }
+.rw-dots { min-width: 0; }
+.rw-dots button { height: 44px; }
+@media (pointer: coarse), (max-width: 900px) {
+  .rw-dots button { flex: 0 1 36px; width: 36px; min-width: 24px; }
+  .footer-cols a { margin: 0; padding: 11px 0;min-width: 44px; background-position: left bottom 8px; }
+}
+@media (min-width: 901px) {
+  .nav a { padding: 12px 0; }
+  .nav a::after { bottom: 6px; }
+}
+@media (max-width: 640px) {
+  .header .btn { width: 44px; }
+  .runway-ctrl { flex-wrap: wrap; row-gap: 10px; }
+  /* "Ver peça" em linha própria, com folga para o botão flutuante do WhatsApp */
+  .runway-ctrl .btn { flex: 1 0 calc(100% - 120px); margin: 0 60px; }
+  .rw-dots { flex: 1 1 0; justify-content: center; }
+}
+/* Telas médias: a barra da passarela não passa por baixo do botão do WhatsApp */
+@media (min-width: 641px) and (max-width: 1400px) {
+  .runway-bar { padding-right: calc(var(--gutter) + 64px); }
+}
+/* Tablet: nome e preço numa linha, controles na outra, para o nome não ser cortado */
+@media (min-width: 641px) and (max-width: 1000px) {
+  .runway-bar { flex-direction: column; align-items: stretch; gap: 14px; }
+  .runway-ctrl { justify-content: flex-end; }
+}
+
 /* Quem pede "reduzir movimento" vê tudo parado e já no lugar */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
