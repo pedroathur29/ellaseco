@@ -21,13 +21,13 @@
   // Foto real da peça (ou ilustração provisória, se ainda não houver foto)
   // opts.sizes → o navegador escolhe entre a miniatura e a foto grande conforme a tela
   // opts.priority → 'high' ou 'low': quais fotos o navegador baixa primeiro
-  function media(p, size, lazy, opts = {}) {
-    if (!p.photos.length) return figure(p.look, products.indexOf(p), `Ilustração provisória: ${p.name}`);
-    const full = p.photos[0], sm = small(full);
-    const src = size === 'sm' ? sm : full;
-    const srcset = opts.sizes && p.ratio
-      ? ` srcset="${esc(sm)} ${Math.round(p.ratio * 900)}w, ${esc(full)} ${Math.round(p.ratio * 1600)}w" sizes="${opts.sizes}"` : '';
-    return `<img class="ph" src="${esc(src)}"${srcset} alt="${esc(p.name)}" style="object-position:${esc(p.pos || 'center')}"${lazy ? ' loading="lazy"' : ''}${opts.priority ? ` fetchpriority="${opts.priority}"` : ''} decoding="async" draggable="false">`;
+  // foto com o fundo original (capa da peça) ou, se não houver, o recorte sem fundo
+  function media(p, size, lazy) {
+    const photo = p.photos[0];
+    const full = photo || p.cutout;
+    if (!full) return figure(p.look, products.indexOf(p), `Ilustração provisória: ${p.name}`);
+    const src = size === 'sm' ? small(full) : full;
+    return `<img class="ph${photo ? ' full' : ''}" src="${esc(src)}" alt="${esc(p.name)}" style="object-position:${esc(p.pos || (photo ? 'center top' : 'center bottom'))}"${lazy ? ' loading="lazy"' : ''} decoding="async" draggable="false">`;
   }
 
   /* ---------- Links genéricos de WhatsApp ---------- */
@@ -42,29 +42,32 @@
    * PASSARELA — anel 3D com física de mola
    * ================================================= */
   const stage = $('#runway-stage');
-  const N = products.length;
+  const runway = window.ELLAS.runway;
+  const N = runway.length;
   const STEP = (Math.PI * 2) / N;
-  const models = products.map((p, i) => {
+  const models = runway.map((r, i) => {
+    const p = r.product;
     const el = document.createElement('div');
-    el.className = 'model' + (p.photos.length ? ' has-photo' : '') + (p.cut ? ' cut' : '');
-    if (p.ratio) el.style.setProperty('--ratio', p.ratio);
+    el.className = 'model has-photo' + (r.cut ? ' cut' : '');
+    el.style.setProperty('--ratio', r.ratio);
     el.style.setProperty('--i', i); // ordem de entrada das modelos
     el.setAttribute('role', 'option');
+    const priority = (i <= 1 || i === N - 1) ? 'high' : 'low';
     el.innerHTML =
-      media(p, 'lg', false, { sizes: `(max-width: 640px) ${(p.ratio * 50).toFixed(1)}vh, 300px`, priority: (i <= 1 || i === N - 1) ? 'high' : 'low' }) +
-      `<a class="pin" href="${href(p)}" style="left:${p.pin[0] * 100}%;top:${p.pin[1] * 100}%" tabindex="${i === 0 ? 0 : -1}">
+      `<img class="ph" src="${esc(r.small)}" srcset="${esc(r.small)} ${r.widthSmall}w, ${esc(r.full)} ${r.widthFull}w" sizes="(max-width: 640px) ${(r.ratio * 50).toFixed(1)}vh, 300px" alt="${esc(p.name)}" fetchpriority="${priority}" decoding="async" draggable="false">` +
+      `<a class="pin" href="${href(p)}" style="left:${r.pin[0] * 100}%;top:${r.pin[1] * 100}%" tabindex="${i === 0 ? 0 : -1}">
         <span class="pin-dot">${i + 1}</span><span class="pin-tag"><b>${esc(p.name)}</b>${money(p.price)}</span></a>`;
     stage.appendChild(el);
     return el;
   });
 
   const dots = $('#rw-dots');
-  dots.innerHTML = products.map((p, i) => `<button type="button" data-i="${i}" aria-label="${i + 1}: ${esc(p.name)}"></button>`).join('');
+  dots.innerHTML = runway.map(({ product: p }, i) => `<button type="button" data-i="${i}" aria-label="${i + 1}: ${esc(p.name)}"></button>`).join('');
   dots.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) { goTo(+b.dataset.i); userActed(); } });
 
   const list = $('#runway-list');
-  list.innerHTML = products
-    .map((p, i) => `<li><button type="button" data-i="${i}"><span class="n">${pad(i + 1)}</span><span><span class="t">${esc(p.name)}</span><span class="p">${money(p.price)}</span></span></button></li>`)
+  list.innerHTML = runway
+    .map(({ product: p }, i) => `<li><button type="button" data-i="${i}"><span class="n">${pad(i + 1)}</span><span><span class="t">${esc(p.name)}</span><span class="p">${money(p.price)}</span></span></button></li>`)
     .join('');
 
   let pos = 0, vel = 0, target = 0, dragging = false, raf = 0, active = -1;
@@ -73,9 +76,8 @@
 
   function radius() {
     const w = innerWidth;
-    const photos = products.some(p => p.photos.length);
-    if (w < 640) return w * (photos ? 0.4 : 0.34);
-    return Math.min(w * (photos ? 0.3 : 0.24), photos ? 440 : 360);
+    if (w < 640) return w * 0.4;
+    return Math.min(w * 0.3, 440);
   }
 
   let R = 0;
@@ -100,7 +102,7 @@
   let capReady = false;
   function setActive(a) {
     active = a;
-    const p = products[a];
+    const p = runway[a].product;
     models.forEach((el, i) => {
       el.classList.toggle('is-active', i === a);
       el.setAttribute('aria-selected', i === a);
@@ -157,7 +159,7 @@
   stage.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') { step(1); userActed(); e.preventDefault(); }
     if (e.key === 'ArrowLeft') { step(-1); userActed(); e.preventDefault(); }
-    if (e.key === 'Enter' && e.target === stage) location.hash = href(products[active]);
+    if (e.key === 'Enter' && e.target === stage) location.hash = href(runway[active].product);
   });
 
   /* Arrastar (mouse e toque) */
@@ -204,7 +206,7 @@
     const m = e.target.closest('.model');
     if (m && !e.target.closest('.pin')) {
       const i = models.indexOf(m);
-      if (i === active) location.hash = href(products[i]);
+      if (i === active) location.hash = href(runway[i].product);
       else { goTo(i); userActed(); }
     }
   }, true);
@@ -246,7 +248,7 @@
     return `<li class="card" style="animation-delay:${Math.min(i, 8) * 60}ms">
       <a href="${href(p)}">
         <div class="card-media">
-          ${p.photos.length ? '' : '<span class="tag tag-photo">Foto em breve</span>'}${media(p, 'sm', true)}
+          ${media(p, 'sm', true)}
           ${p.availability === 'ultimas' ? '<span class="tag tag-avail is-ultimas">Últimas peças</span>' : ''}
         </div>
         <div class="card-info">
@@ -262,7 +264,14 @@
     </li>`;
   }
 
-  function applyFilters() {
+  /* filtros que só aparecem quando há informação suficiente no catálogo */
+  $('#f-price-group').hidden = !products.some(p => p.price != null);
+  $('#f-size-group').hidden = products.filter(p => p.sizes.length).length < products.length / 2;
+
+  const PAGE = 12;
+  let limit = PAGE;
+  function applyFilters(keepLimit) {
+    if (keepLimit !== true) limit = PAGE;
     const q = norm(state.q.trim());
     const [min, max] = state.price === 'all' ? [0, Infinity] : state.price.split('-').map(Number);
     const out = products.filter(p =>
@@ -271,7 +280,8 @@
       (!state.size || p.sizes.includes(state.size)) &&
       (state.price === 'all' || (p.price != null && p.price >= min && p.price < max))
     );
-    $('#grid').innerHTML = out.map(card).join('');
+    $('#grid').innerHTML = out.slice(0, limit).map((p, i) => card(p, i % PAGE)).join('');
+    $('#more').hidden = out.length <= limit;
     $('#empty').hidden = out.length > 0;
     $('#result-count').textContent = out.length === 1 ? '1 peça' : `${out.length} peças`;
     $('#clear-inline').hidden = !(state.q || state.cat !== 'Todas' || state.size || state.price !== 'all');
@@ -302,6 +312,13 @@
   };
   $('#clear-filters').addEventListener('click', clearFilters);
   $('#clear-inline').addEventListener('click', clearFilters);
+  $('#more').addEventListener('click', () => {
+    const first = limit;
+    limit += PAGE;
+    applyFilters(true);
+    const next = $$('#grid .card a')[first]; // o foco segue para a primeira peça nova
+    if (next) next.focus({ preventScroll: true });
+  });
   applyFilters();
 
   /* Vitrine do Instagram (fotos de publicações do perfil) */
@@ -319,26 +336,30 @@
 
   function renderProduct(p) {
     const i = products.indexOf(p);
-    const prev = products[(i - 1 + N) % N], next = products[(i + 1) % N];
+    const total = products.length;
+    const prev = products[(i - 1 + total) % total], next = products[(i + 1) % total];
     chosenSize = p.sizes.length === 1 ? p.sizes[0] : null;
-    const others = products.filter(x => x !== p).slice(0, 3);
+    // "Combine com": peças de outras categorias, variando conforme a peça aberta
+    const pool = products.filter(x => x.category !== p.category && x.photos.length);
+    const others = [0, 1, 2].map(k => pool[(i + k) % pool.length]).filter(Boolean);
     const photo = media(p, 'lg', false);
     const slots = p.photos.length > 1
-      ? p.photos.slice(1, 4).map(src => `<img class="ph" src="${esc(small(src))}" alt="${esc(p.name)}, detalhe" loading="lazy">`).join('')
-      : p.photos.length ? '' : ['Foto de frente', 'Foto de detalhe', 'Foto vestida'].map(t => `<div class="pd-slot">${t}<br>em breve</div>`).join('');
+      ? p.photos.map((src, k) => `<button type="button" class="pd-thumb" data-photo="${esc(src)}" aria-pressed="${k === 0}" aria-label="Ver foto ${k + 1} de ${p.photos.length}"><img src="${esc(small(src))}" alt="" loading="lazy"></button>`).join('')
+      : '';
+    const hasMedia = p.photos.length || p.cutout;
 
     panel.innerHTML = `
       <div class="pd-top">
         <button class="pd-back" type="button" data-close aria-label="Voltar para a coleção"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Voltar para a coleção</span></button>
         <div class="pd-nav">
           <a class="round" href="${href(prev)}" aria-label="Peça anterior: ${esc(prev.name)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
-          <span>${pad(i + 1)} / ${pad(N)}</span>
+          <span>${pad(i + 1)} / ${pad(total)}</span>
           <a class="round" href="${href(next)}" aria-label="Próxima peça: ${esc(next.name)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
         </div>
       </div>
       <div class="pd-media">
         <div class="pd-sticky">
-          <div class="pd-main${p.photos.length ? ' has-photo' : ''}">${p.photos.length ? '' : '<span class="tag tag-photo">Ilustração · foto em breve</span>'}${photo}</div>
+          <div class="pd-main${hasMedia ? ' has-photo' : ''}">${hasMedia ? '' : '<span class="tag tag-photo">Ilustração · foto em breve</span>'}${photo}</div>
           ${slots ? `<div class="pd-thumbs">${slots}</div>` : ''}
         </div>
       </div>
@@ -376,6 +397,13 @@
       chosenSize = chosenSize === b.dataset.psize ? null : b.dataset.psize;
       panel.querySelectorAll('[data-psize]').forEach(x => x.setAttribute('aria-pressed', x.dataset.psize === chosenSize));
       updateWa(p);
+    }));
+    const thumbs = panel.querySelectorAll('[data-photo]');
+    thumbs.forEach((b, k) => b.addEventListener('click', () => {
+      const main = $('.pd-main .ph', panel);
+      main.src = b.dataset.photo;
+      main.alt = `${p.name}, foto ${k + 1}`;
+      thumbs.forEach(x => x.setAttribute('aria-pressed', x === b));
     }));
     panel.scrollTop = 0;
   }

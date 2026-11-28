@@ -40,7 +40,7 @@
   const marquee = $('.marquee');
   const track = $('#marquee');
   if (track) {
-    const one = products.map(p => `<a class="mq-item" href="#/peca/${p.slug}" tabindex="-1"><img src="${p.photos[0].replace(/\.(webp|png|jpg)$/i, '-sm.$1')}" alt="" width="${Math.round((p.ratio || .42) * 170)}" height="170" fetchpriority="low" decoding="async"><span>${p.name}</span></a>`).join('');
+    const one = window.ELLAS.runway.map(r => r.product).map(p => `<a class="mq-item" href="#/peca/${p.slug}" tabindex="-1"><img src="${p.cutout.replace(/\.(webp|png|jpg)$/i, '-sm.$1')}" alt="" width="${Math.round(p.ratio * 170)}" height="170" fetchpriority="low" decoding="async"><span>${p.name}</span></a>`).join('');
     // A faixa anda metade do próprio comprimento e recomeça. Para nunca aparecer
     // espaço vazio, cada metade precisa ser MAIOR que a largura da tela:
     // medimos um conjunto e repetimos quantas vezes for preciso.

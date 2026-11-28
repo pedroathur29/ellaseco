@@ -21,22 +21,21 @@
   <link rel="canonical" href="https://pedroathur29.github.io/ellaseco/">
   <link rel="icon" type="image/png" sizes="48x48" href="img/marca/favicon-48.png?v=20261127a">
   <link rel="apple-touch-icon" href="img/marca/apple-touch-icon.png?v=20261127a">
-  <link rel="stylesheet" href="css/styles.css?v=20261127a">
-  <script src="js/products.js?v=20261127a"></script>
+  <link rel="stylesheet" href="css/styles.css?v=20261128a">
+  <script src="js/products.js?v=20261128a"></script>
   <script>
     /* Adianta o download das 3 fotos visíveis da passarela (a da frente e as duas ao lado).
        Lê o próprio catálogo, então continua certo quando as fotos forem trocadas.
        A conta de srcset/sizes é a mesma de media() em js/app.js. */
     (function () {
-      var P = window.ELLAS.products, N = P.length;
+      var R = window.ELLAS.runway, N = R.length;
       [0, 1, N - 1].forEach(function (i) {
-        var p = P[i];
-        if (!p || !p.photos.length || !p.ratio) return;
-        var full = p.photos[0], sm = full.replace(/\.(webp|png|jpg)$/i, '-sm.$1');
+        var r = R[i];
+        if (!r) return;
         var l = document.createElement('link');
-        l.rel = 'preload'; l.as = 'image'; l.href = sm;
-        l.setAttribute('imagesrcset', sm + ' ' + Math.round(p.ratio * 900) + 'w, ' + full + ' ' + Math.round(p.ratio * 1600) + 'w');
-        l.setAttribute('imagesizes', '(max-width: 640px) ' + (p.ratio * 50).toFixed(1) + 'vh, 300px');
+        l.rel = 'preload'; l.as = 'image'; l.href = r.small;
+        l.setAttribute('imagesrcset', r.small + ' ' + r.widthSmall + 'w, ' + r.full + ' ' + r.widthFull + 'w');
+        l.setAttribute('imagesizes', '(max-width: 640px) ' + (r.ratio * 50).toFixed(1) + 'vh, 300px');
         document.head.appendChild(l);
       });
     })();
@@ -165,12 +164,16 @@
         </div>
         <div class="panels">
           <a class="panel" href="#colecao" data-filter="Vestidos">
-            <img src="img/insta/vestido-leve-bolsos.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
+            <img src="img/pecas/fotos/vestido-rosa-midi-1-sm.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
             <span class="panel-txt"><span class="panel-name">Vestidos</span><span class="panel-meta" data-count="Vestidos"></span></span>
           </a>
           <a class="panel" href="#colecao" data-filter="Conjuntos">
-            <img src="img/insta/conjunto-bata-alfaiataria.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
+            <img src="img/pecas/fotos/conjunto-rosa-e-marrom-1-sm.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
             <span class="panel-txt"><span class="panel-name">Conjuntos</span><span class="panel-meta" data-count="Conjuntos"></span></span>
+          </a>
+          <a class="panel" href="#colecao" data-filter="Blusas">
+            <img src="img/pecas/fotos/blusa-um-ombro-1-sm.webp" alt="" loading="lazy" fetchpriority="low" decoding="async">
+            <span class="panel-txt"><span class="panel-name">Blusas</span><span class="panel-meta" data-count="Blusas"></span></span>
           </a>
           <a class="panel" href="#baggies">
             <img class="panel-bag" src="img/marca/collection-bag.jpg" alt="" loading="lazy" fetchpriority="low" decoding="async">
@@ -191,7 +194,7 @@
           <div>
             <h2 id="colecao-title" class="display-2">Peças para o seu <em>dia a dia</em></h2>
           </div>
-          <p class="sec-note">Tamanhos do P ao GG. Mostramos apenas os tamanhos confirmados para cada peça.</p>
+          <p class="sec-note">Tamanhos do P ao GG. Valores, tamanhos e disponibilidade pelo WhatsApp.</p>
         </div>
 
         <form class="filters" id="filters" role="search" onsubmit="return false">
@@ -206,11 +209,11 @@
           </div>
 
           <div class="f-row">
-            <div class="f-group" role="group" aria-label="Tamanho">
+            <div class="f-group" id="f-size-group" role="group" aria-label="Tamanho">
               <span class="f-label">Tamanho</span>
               <div class="chips chips-sm" id="f-size"></div>
             </div>
-            <label class="f-group f-price">
+            <label class="f-group f-price" id="f-price-group">
               <span class="f-label">Preço</span>
               <select id="f-price">
                 <option value="all">Todos os valores</option>
@@ -227,6 +230,7 @@
           <button type="button" class="link-clear" id="clear-inline" hidden>Limpar filtros</button>
         </div>
         <ul class="grid" id="grid"></ul>
+        <div class="more-row"><button type="button" class="btn btn-line" id="more" hidden>Ver mais peças</button></div>
         <div class="empty" id="empty" hidden>
           <p class="display-3">Nenhuma peça encontrada.</p>
           <p>Tente outra combinação ou fale com a gente: podemos ter novidades que ainda não estão aqui.</p>
@@ -331,7 +335,7 @@
     </div>
     <div class="wrap footer-base">
       <span>© <span id="year"></span> Ella’s &amp; Co.</span>
-      <span class="proto-note">Protótipo · fotos do Instagram @ellas.eco · preços ilustrativos</span>
+      <span class="proto-note">Protótipo · valores, tamanhos e disponibilidade pelo WhatsApp</span>
     </div>
   </footer>
 
@@ -345,8 +349,8 @@
     <article class="product-panel" id="product-panel"></article>
   </div>
 
-  <script src="js/figures.js?v=20261127a"></script>
-  <script src="js/app.js?v=20261127a"></script>
-  <script src="js/motion.js?v=20261127a"></script>
+  <script src="js/figures.js?v=20261128a"></script>
+  <script src="js/app.js?v=20261128a"></script>
+  <script src="js/motion.js?v=20261128a"></script>
 </body>
 </html>

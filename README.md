@@ -11,8 +11,12 @@ Dê dois cliques em `index.html`.
 
 ## Como trocar ou adicionar peças
 
-Edite `js/products.js`. Cada peça tem nome, categoria, preço, tamanhos confirmados, descrição e foto sem fundo em `img/pecas/`.
+Edite `js/products.js`. Cada peça tem nome, categoria, preço, tamanhos confirmados, descrição e fotos.
 As instruções de cada campo estão no topo do arquivo.
+
+- `photos`: fotos com o fundo original, em `img/pecas/fotos/` (`nome.webp` com 1280 px de altura e `nome-sm.webp` com 720 px).
+- `cutout`: foto sem fundo, em `img/pecas/`. Os recortes novos ficam em `img/pecas/recortes/`.
+- A passarela mostra as peças listadas em `runwaySlugs`, no fim de `js/products.js`; cada uma precisa de `cutout`.
 
 ## Ao trocar fotos ou arquivos
 
