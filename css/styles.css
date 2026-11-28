@@ -826,6 +826,14 @@ button { cursor: pointer; }
 /* nessas larguras a barra ocupa duas linhas: o palco fica um pouco mais baixo */
 @media (min-width: 1001px) and (max-width: 1150px) { .runway { --stage-h: clamp(380px, calc(100svh - 448px), 640px); } }
 
+/* Acento ajustado em "autêntico": o "ê" continua no texto (busca e leitor de tela), mas é
+   desenhado como "e" + circunflexo mais baixo e largo que o original da fonte.
+   As medidas valem para a Cormorant Garamond itálica com line-height .98 (título do topo). */
+.hero-title .nw { white-space: nowrap; }
+.e-circ { position: relative; display: inline-block; color: transparent; }
+.e-circ::before, .e-circ::after { position: absolute; top: 0; color: var(--gold); pointer-events: none; }
+.e-circ::before { content: 'e'; content: 'e' / ''; left: 0; }
+.e-circ::after { content: '\02C6'; content: '\02C6' / ''; left: .037em; transform-origin: .18em .34em; transform: scale(1.45, .7); }
 /* Quem pede "reduzir movimento" vê tudo parado e já no lugar */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
